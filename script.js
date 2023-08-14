@@ -82,18 +82,34 @@ function createIcon(classes) {
     return icon;
 }
 
-function removeItem(e) {
+function onClickItem(e) {
     if (e.target.parentElement.classList.contains("remove-item")) {
-        if (confirm("Are you sure you want to remove this item?")) {
-            e.target.parentElement.parentElement.remove();
-        }
+        let item = e.target.parentElement.parentElement;
+        removeItem(item);
+        return;
     }
+}
+
+function removeItem(item) {
+    if (confirm("Are you sure you want to remove this item?")) {
+        item.remove();
+        const itemText = item.firstChild.textContent;
+        removeItemFromStorage(itemText);
+    }
+}
+
+function removeItemFromStorage(item) {
+    let itemsFromStorage = getItemsFromStorage();
+    itemsFromStorage.splice(itemsFromStorage.indexOf(item), 1);
+
+    localStorage.setItem('items',JSON.stringify(itemsFromStorage));
 }
 
 function clearItems(e) {
     while (itemList.firstChild) {
         itemList.removeChild(itemList.firstChild);
     }
+    localStorage.removeItem("items");
     checkUI();
 }
 
@@ -128,7 +144,7 @@ function checkUI() {
 function init() {    
     //event listeners
     itemForm.addEventListener("submit", onAddItemSubmit);
-    itemList.addEventListener("click", removeItem);
+    itemList.addEventListener("click", onClickItem);
     clearButton.addEventListener("click",clearItems);
     itemsFilter.addEventListener("input",filterItems);
     document.addEventListener("DOMContentLoaded",displayItems);
