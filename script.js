@@ -9,7 +9,14 @@ let isEditMode = false;
 
 function displayItems() {
     const itemsFromStorage = getItemsFromStorage();
-    itemsFromStorage.forEach((item) => addItemToDOM(item));
+    const checkedFromStorage = getCheckedFromStorage();
+    console.log(checkedFromStorage);
+    itemsFromStorage.forEach((item) => {
+        let DOMItem = addItemToDOM(item);
+        if (checkedFromStorage.includes(item)) {
+            DOMItem.classList.add("checked-off");
+        }
+    });
     checkUI();
 }
 
@@ -90,6 +97,19 @@ function getItemsFromStorage() {
     return itemsFromStorage;
 }
 
+function getCheckedFromStorage() {
+    let checkedFromStorage;
+
+    if (localStorage.getItem("checked") === null) {
+        checkedFromStorage = [];
+    }
+    else {
+        checkedFromStorage = JSON.parse(localStorage.getItem("checked"));
+    }
+
+    return checkedFromStorage;
+}
+
 function createButton(classes) {
     const button = document.createElement("button");
     button.className = classes;
@@ -129,6 +149,7 @@ function onDoubleClickItem(e) {
         const newItem = addItem(e.target.textContent);
         newItem.classList.add("checked-off");
     }
+    toggleCheckedInStorage(e.target.textContent);
 }
 
 function checkIfItemExists(item) {
@@ -151,6 +172,7 @@ function setItemToEdit(item) {
 function removeItem(item) {
     item.remove();
     const itemText = item.firstChild.textContent;
+    console.log(itemText)
     removeItemFromStorage(itemText);
 }
 
@@ -167,11 +189,25 @@ function removeItemFromStorage(item) {
     localStorage.setItem('items',JSON.stringify(itemsFromStorage));
 }
 
+function toggleCheckedInStorage(itemText){
+    let checkedFromStorage = getCheckedFromStorage();
+    if (checkedFromStorage.includes(itemText)) {
+        checkedFromStorage.splice(checkedFromStorage.indexOf(itemText), 1);
+        localStorage.setItem('checked',JSON.stringify(checkedFromStorage));
+    }
+    else {
+        checkedFromStorage.push(itemText); 
+        //convert to json string and set to local storage
+        localStorage.setItem('checked',JSON.stringify(checkedFromStorage));
+    }
+}
+
 function clearItems(e) {
     while (itemList.firstChild) {
         itemList.removeChild(itemList.firstChild);
     }
-    localStorage.removeItemWarn("items");
+    localStorage.removeItem("items");
+    localStorage.removeItem("checked");
     checkUI();
 }
 
