@@ -38,8 +38,12 @@ function onAddItemSubmit(e) {
         }
     }
 
+    addItem(newItem);
+} 
+
+function addItem(newItem){
     //create item DOM element
-    addItemToDOM(newItem);
+    const liItem = addItemToDOM(newItem);
 
     //add item to local storage
     addItemToStorage(newItem);
@@ -47,7 +51,8 @@ function onAddItemSubmit(e) {
     checkUI();
 
     itemInput.value = "";
-} 
+    return liItem;
+}
 
 function addItemToDOM(item) {
     //create list item
@@ -59,6 +64,7 @@ function addItemToDOM(item) {
 
     // add li to the DOM
     itemList.appendChild(li);
+    return li
 }
 
 function addItemToStorage(item) {
@@ -101,11 +107,27 @@ function createIcon(classes) {
 function onClickItem(e) {
     if (e.target.parentElement.classList.contains("remove-item")) {
         let item = e.target.parentElement.parentElement;
-        removeItem(item);
+        removeItemWarn(item);
         return;
     }
-    else {
+    else if (true) {
         setItemToEdit(e.target);
+    }
+}
+
+function onDoubleClickItem(e) {
+    checkUI();
+    if (e.target.parentElement.classList.contains("remove-item")) {
+        return;
+    }
+    else if (e.target.classList.contains("checked-off")){
+        e.target.classList.remove("checked-off");
+        e.target.classList.remove("edit-mode");
+    }
+    else {
+        removeItem(e.target);
+        const newItem = addItem(e.target.textContent);
+        newItem.classList.add("checked-off");
     }
 }
 
@@ -126,12 +148,15 @@ function setItemToEdit(item) {
     formButton.style.backgroundColor = "#228B22";
     itemInput.value = item.textContent;
 }
-
 function removeItem(item) {
+    item.remove();
+    const itemText = item.firstChild.textContent;
+    removeItemFromStorage(itemText);
+}
+
+function removeItemWarn(item) {
     if (confirm("Are you sure you want to remove this item?")) {
-        item.remove();
-        const itemText = item.firstChild.textContent;
-        removeItemFromStorage(itemText);
+        removeItem(item);
     }
 }
 
@@ -146,7 +171,7 @@ function clearItems(e) {
     while (itemList.firstChild) {
         itemList.removeChild(itemList.firstChild);
     }
-    localStorage.removeItem("items");
+    localStorage.removeItemWarn("items");
     checkUI();
 }
 
@@ -191,6 +216,7 @@ function init() {
     clearButton.addEventListener("click",clearItems);
     itemsFilter.addEventListener("input",filterItems);
     document.addEventListener("DOMContentLoaded",displayItems);
+    itemList.addEventListener("dblclick", onDoubleClickItem);
 
     checkUI();
 }

@@ -128,3 +128,9 @@ header h1 {
 .edit-mode {
   color: #ccc;
 }
+
+.checked-off {
+  color: #F00;
+  text-decoration-color: red;
+  text-decoration: line-through;
+}
