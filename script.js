@@ -3,6 +3,8 @@ const itemInput = document.getElementById("item-input");
 const itemList = document.getElementById("item-list");
 const clearButton = document.getElementById("clear");
 const itemsFilter = document.getElementById("filter");
+const formButton = itemForm.querySelector("button");
+let isEditMode = false;
 
 
 function displayItems() {
@@ -88,6 +90,22 @@ function onClickItem(e) {
         removeItem(item);
         return;
     }
+    else {
+        setItemToEdit(e.target);
+    }
+}
+
+function setItemToEdit(item) {
+    isEditMode = true;
+
+    itemList
+        .querySelectorAll("li")
+        .forEach((i)=>i.classList.remove("edit-mode"));
+
+    item.classList.add("edit-mode");
+    formButton.innerHTML = '<i class="fa-solid fa-pen"></i> Update Item';
+    formButton.style.backgroundColor = "#228B22";
+    itemInput.value = item.textContent;
 }
 
 function removeItem(item) {
