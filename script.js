@@ -10,7 +10,6 @@ let isEditMode = false;
 function displayItems() {
     const itemsFromStorage = getItemsFromStorage();
     const checkedFromStorage = getCheckedFromStorage();
-    console.log(checkedFromStorage);
     itemsFromStorage.forEach((item) => {
         let DOMItem = addItemToDOM(item);
         if (checkedFromStorage.includes(item)) {
@@ -130,7 +129,7 @@ function onClickItem(e) {
         removeItemWarn(item);
         return;
     }
-    else if (true) {
+    else if (e.target.parentElement.classList.contains("items")) {
         setItemToEdit(e.target);
     }
 }
@@ -172,7 +171,6 @@ function setItemToEdit(item) {
 function removeItem(item) {
     item.remove();
     const itemText = item.firstChild.textContent;
-    console.log(itemText)
     removeItemFromStorage(itemText);
 }
 
